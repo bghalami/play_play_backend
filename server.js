@@ -82,9 +82,6 @@ app.delete('/api/v1/songs/:id', function (request, response) {
   database('playlist_songs')
   .where("song_id", songId)
   .del()
-  .then(() => {
-    response.status(204);
-  })
   .catch((error) => {
     response.status(404).json({ error });
   })
