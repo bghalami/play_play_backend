@@ -76,6 +76,27 @@ app.patch('/api/v1/songs/:id', function (request, response) {
   });
 });
 
+app.delete('/api/v1/songs/:id', function (request, response) {
+  const songId = request.params.id;
+
+  database('playlist_songs')
+  .where("song_id", songId)
+  .del()
+  .catch((error) => {
+    response.status(404).json({ error });
+  })
+
+  database('songs')
+  .where("id", songId)
+  .del()
+  .then(() => {
+    response.status(204);
+  })
+  .catch((error) => {
+    response.status(404).json({ error });
+  })
+});
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
