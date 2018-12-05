@@ -57,6 +57,25 @@ app.post('/api/v1/songs', (request, response) => {
     });
 });
 
+app.put('/api/v1/songs/:id', function (request, response) {
+  const song   = request.body;
+  const songId = request.params.id;
+
+  database('songs').select('id')
+  .where("id", songId)
+  .update(song)
+  .then(() => {
+    database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
+    .where('id', songId)
+    .then((updatedSong) => {
+      response.status(200).json({ songs: updatedSong[0] });
+    })
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
