@@ -97,6 +97,24 @@ app.delete('/api/v1/songs/:id', function (request, response) {
   })
 });
 
+app.get('/api/v1/playlists', (request, response) => {
+  database('playlists').select(['id', 'name'])
+  .then((playlists) => {
+    response.status(200).json(playlists);
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
+
+
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
+
+
+/* 
+select p.id, p.name
+
+*/
