@@ -14,6 +14,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Play-play';
 
+app.get("/", (request, response) => {
+  response.send("yo")
+});
+
 app.get('/api/v1/favorites', (request, response) => {
   database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
     .then((songs) => {
@@ -119,3 +123,5 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
+
+module.exports = app;
