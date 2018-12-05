@@ -64,6 +64,46 @@ app.post('/api/v1/songs', (request, response) => {
     });
 });
 
+app.patch('/api/v1/songs/:id', function (request, response) {
+  const song   = request.body;
+  const songId = request.params.id;
+
+  database('songs').select('id')
+  .where("id", songId)
+  .update(song)
+  .then(() => {
+    database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
+    .where('id', songId)
+    .then((updatedSong) => {
+      response.status(200).json({ songs: updatedSong[0] });
+    })
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
+
+app.delete('/api/v1/songs/:id', function (request, response) {
+  const songId = request.params.id;
+
+  database('playlist_songs')
+  .where("song_id", songId)
+  .del()
+  .catch((error) => {
+    response.status(404).json({ error });
+  })
+
+  database('songs')
+  .where("id", songId)
+  .del()
+  .then(() => {
+    response.status(204);
+  })
+  .catch((error) => {
+    response.status(404).json({ error });
+  })
+});
+
 app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
   const playlist      = request.params.playlist_id
   const song          = request.params.id
