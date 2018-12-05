@@ -86,6 +86,36 @@ app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
     });
 });
 
+app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
+  const playlist      = request.params.playlist_id
+  const song          = request.params.id
+
+  let songName     = ""
+  let playlistName = ""
+  database('songs').select('name')
+    .where('id', song)
+    .then(song => {
+      songName = song[0].name
+    })
+  database('playlists').select('name')
+    .where('id', playlist)
+    .then(playlist => {
+      playlistName = playlist[0].name
+    })
+
+  database('playlist_songs')
+    .where({song_id: song, playlist_id: playlist})
+    .del()
+    .then(() => {
+      response.status(201).json({"message": `Successfully removed ${songName} from ${playlistName}`});
+    })
+    .catch((error) => {
+      response.status(404).json({ error });
+    })
+});
+
+
+
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
