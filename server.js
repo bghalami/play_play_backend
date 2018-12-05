@@ -57,7 +57,7 @@ app.post('/api/v1/songs', (request, response) => {
     });
 });
 
-app.put('/api/v1/songs/:id', function (request, response) {
+app.patch('/api/v1/songs/:id', function (request, response) {
   const song   = request.body;
   const songId = request.params.id;
 
