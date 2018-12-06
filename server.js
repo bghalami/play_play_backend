@@ -149,7 +149,7 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
     })
 
   let somthing = new Promise()
-  
+
   database('playlist_songs')
     .where({song_id: song, playlist_id: playlist})
     .del()
@@ -162,36 +162,38 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 });
 
 app.get('/api/v1/playlists', (request, response) => {
-  let playlists = []
-  let songs = []
+  let a = []
+  let b = []
   database('playlists').select(['playlists.id', 'playlists.name'])
   .join('playlist_songs', 'playlists.id', 'playlist_songs.playlist_id')
   .then((playlists) => {
-
-
-    let playlistSongs = []
-    for(let playlist of playlists){
-      getPlaylistSongs(playlist.id)
-      .then((songs) => { playlist.songs = songs})
-      .then(() => { playlistSongs.push(playlist) })       
-    }
-    eval(pry.it)
+    a = playlists
   })
-  .then(psongs => {response.status(200).json(psongs)})
+
+  database("songs")
+  .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
+  .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+  .then((songs) => { b = songs })
+  .then(() => {
+    for(let playlist of a) {
+      playlist.songs = b.filter(song => (song.playlist_id == playlist.id))
+    }
+  })
+  .then(() => {response.status(200).json(a)})
   .catch((error) => {
     response.status(500).json({ error });
   });
 });
 
-const getPlaylistSongs = (id) => {
-    return database("songs")
-    .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating'])
-    .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
-    .where('playlist_songs.playlist_id', id)
-    .then((songs) => {
-      return songs
-    })
-}
+// const getPlaylistSongs = (id) => {
+//     return database("songs")
+//     .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating'])
+//     .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+//     .where('playlist_songs.playlist_id', id)
+//     .then((songs) => {
+//       return songs
+//     })
+// }
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
