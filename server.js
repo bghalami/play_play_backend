@@ -148,6 +148,8 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
       playlistName = playlist[0].name
     })
 
+  let somthing = new Promise()
+  
   database('playlist_songs')
     .where({song_id: song, playlist_id: playlist})
     .del()
@@ -160,17 +162,21 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 });
 
 app.get('/api/v1/playlists', (request, response) => {
+  let playlists = []
+  let songs = []
   database('playlists').select(['playlists.id', 'playlists.name'])
   .join('playlist_songs', 'playlists.id', 'playlist_songs.playlist_id')
   .then((playlists) => {
+
+
     let playlistSongs = []
     for(let playlist of playlists){
-      var songs = getPlaylistSongs(playlist.id)
-      playlist.songs = songs
-      playlistSongs.push(playlist)
+      getPlaylistSongs(playlist.id)
+      .then((songs) => { playlist.songs = songs})
+      .then(() => { playlistSongs.push(playlist) })       
     }
-    return playlistSongs
-    })
+    eval(pry.it)
+  })
   .then(psongs => {response.status(200).json(psongs)})
   .catch((error) => {
     response.status(500).json({ error });
@@ -178,17 +184,13 @@ app.get('/api/v1/playlists', (request, response) => {
 });
 
 const getPlaylistSongs = (id) => {
-  let songlist = []
-  Promise.resolve([
-    database("songs")
+    return database("songs")
     .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating'])
     .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
     .where('playlist_songs.playlist_id', id)
     .then((songs) => {
-      songlist = songs
+      return songs
     })
-  ])
-  return songlist
 }
 
 app.listen(app.get('port'), () => {
