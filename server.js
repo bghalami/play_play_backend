@@ -159,16 +159,35 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 });
 
 app.get('/api/v1/playlists', (request, response) => {
-  database('playlists').select(['id', 'name'])
+  database('playlists').select(['playlists.id', 'playlists.name'])
+  .join('playlist_songs', 'playlists.id', 'playlist_songs.playlist_id')
+  .joins(songs)
   .then((playlists) => {
-    response.status(200).json(playlists);
+    let playlistSongs = []
+    for(let playlist of playlists){
+      var songs = database("songs")
+        .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating'])
+        .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+        .where('playlist_songs.playlist_id', playlist.id)
+      eval(pry.it)
+      playlist.songs = songs
+      playlistSongs.push(playlist)
+    }
+    return playlistSongs
   })
+  .then(psongs => {response.status(200).json(psongs)})
   .catch((error) => {
     response.status(500).json({ error });
   });
 });
 
-
+// const getPlaylistSongs = (id) => {
+//   eval(pry.it)
+//   database("songs")
+//     .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating'])
+//     .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+//     .where('playlist_songs.playlist_id', 19)
+// }
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
