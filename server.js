@@ -177,6 +177,7 @@ app.get('/api/v1/playlists', (request, response) => {
   .then(() => {
     for(let playlist of a) {
       playlist.songs = b.filter(song => (song.playlist_id == playlist.id))
+      playlist.songs.forEach(song => delete song.playlist_id)
     }
   })
   .then(() => {response.status(200).json(a)})
@@ -185,24 +186,9 @@ app.get('/api/v1/playlists', (request, response) => {
   });
 });
 
-// const getPlaylistSongs = (id) => {
-//     return database("songs")
-//     .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating'])
-//     .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
-//     .where('playlist_songs.playlist_id', id)
-//     .then((songs) => {
-//       return songs
-//     })
-// }
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
 });
-
-
-/* 
-select p.id, p.name
-
-*/
 
 module.exports = app;
