@@ -32,9 +32,7 @@ module.exports = {
 
   production: {
     client: 'pg',
-    connection: {
-      database: 'play_play_production'
-    },
+    connection: "postgres://pbabetphqyeynf:019c09549745eb2173b981258f9386164fc00353cd0cf89d0231701682be8f63@ec2-54-225-100-12.compute-1.amazonaws.com:5432/dac2faig0bp5lo",
     migrations: {
         directory: './db/migrations'
       },
