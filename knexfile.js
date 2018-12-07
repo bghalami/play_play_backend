@@ -31,19 +31,19 @@ module.exports = {
   },
 
   production: {
-    client: 'postgresql',
-    connection: {
-      database: 'play_play_production',
-      user:     'username',
-      password: 'password'
+    client: 'pg',
+    connection: "postgres://pbabetphqyeynf:019c09549745eb2173b981258f9386164fc00353cd0cf89d0231701682be8f63@ec2-54-225-100-12.compute-1.amazonaws.com:5432/dac2faig0bp5lo",
+    migrations: {
+        directory: './db/migrations'
+      },
+    seeds: {
+      directory: './db/seeds/dev'
     },
     pool: {
       min: 2,
       max: 10
     },
-    migrations: {
-      tableName: 'knex_migrations'
-    }
+    ssl: true
   }
 
 };

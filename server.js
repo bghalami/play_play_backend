@@ -162,29 +162,55 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 });
 
 app.get('/api/v1/playlists', (request, response) => {
-  let a = []
-  let b = []
+  let playlists = []
+  let songs = []
   database('playlists').select(['playlists.id', 'playlists.name'])
-  .join('playlist_songs', 'playlists.id', 'playlist_songs.playlist_id')
-  .then((playlists) => {
-    a = playlists
+  .then((a) => {
+    playlists = a
   })
 
   database("songs")
   .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
   .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
-  .then((songs) => { b = songs })
+  .then((a) => { songs = a })
   .then(() => {
-    for(let playlist of a) {
-      playlist.songs = b.filter(song => (song.playlist_id == playlist.id))
+    for(let playlist of playlists) {
+      playlist.songs = songs.filter(song => (song.playlist_id == playlist.id))
       playlist.songs.forEach(song => delete song.playlist_id)
     }
   })
-  .then(() => {response.status(200).json(a)})
+  .then(() => {response.status(200).json(playlists)})
   .catch((error) => {
     response.status(500).json({ error });
   });
 });
+
+app.get('/api/v1/playlists/:playlist_id/songs', (request, response) => {
+  let playlistId = request.params.playlist_id
+  let playlists = []
+  let songs = []
+  database('playlists').select(['playlists.id', 'playlists.name'])
+  .where('playlists.id', playlistId)
+  .then((a) => {
+    playlists = a
+  })
+
+  database("songs")
+  .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
+  .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+  .then((a) => { songs = a })
+  .then(() => {
+    for(let playlist of playlists) {
+      playlist.songs = songs.filter(song => (song.playlist_id == playlist.id))
+      playlist.songs.forEach(song => delete song.playlist_id)
+    }
+  })
+  .then(() => {response.status(200).json(playlists)})
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
+
 
 
 app.listen(app.get('port'), () => {
