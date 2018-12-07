@@ -165,7 +165,6 @@ app.get('/api/v1/playlists', (request, response) => {
   let playlists = []
   let songs = []
   database('playlists').select(['playlists.id', 'playlists.name'])
-  .join('playlist_songs', 'playlists.id', 'playlist_songs.playlist_id')
   .then((a) => {
     playlists = a
   })
