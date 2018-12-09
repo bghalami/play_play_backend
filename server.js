@@ -89,11 +89,10 @@ app.delete('/api/v1/songs/:id', function (request, response) {
     response.status(404).json({ error });
   })
 
-  database('songs')
-  .where("id", songId)
+  Song.find(songId)
   .del()
-  .then(() => {
-    response.status(204);
+  .then((deletedSong) => {
+    response.status(204).json({ "message": "Success" });
   })
   .catch((error) => {
     response.status(404).json({ error });
