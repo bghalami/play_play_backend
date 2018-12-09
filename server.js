@@ -29,8 +29,7 @@ app.get('/api/v1/favorites', (request, response) => {
 });
 
 app.get('/api/v1/songs/:id', (request, response) => {
-  database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
-  .where("id", request.params.id)
+  Song.find(request.params.id)
     .then((songs) => {
       response.status(200).json(songs);
     })
