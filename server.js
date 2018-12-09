@@ -67,10 +67,8 @@ app.patch('/api/v1/songs/:id', function (request, response) {
   const song   = request.body;
   const songId = request.params.id;
 
-  database('songs').select('id')
-  .where("id", songId)
-  .update(song)
-  .then(() => {
+  Song.update(song, songId)
+    .then(() => {
     database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
     .where('id', songId)
     .then((updatedSong) => {
