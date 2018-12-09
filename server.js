@@ -69,9 +69,8 @@ app.patch('/api/v1/songs/:id', function (request, response) {
 
   Song.update(song, songId)
     .then(() => {
-    database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
-    .where('id', songId)
-    .then((updatedSong) => {
+      Song.find(songId)
+      .then((updatedSong) => {
       response.status(200).json({ songs: updatedSong[0] });
     })
   })
