@@ -160,15 +160,13 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 app.get('/api/v1/playlists', (request, response) => {
   let playlists = []
   let songs = []
-  
+
   Playlist.all()
   .then((a) => {
     playlists = a
   })
 
-  database("songs")
-  .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
-  .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+  Song.withPlaylistId()
   .then((a) => { songs = a })
   .then(() => {
     for(let playlist of playlists) {
@@ -186,15 +184,13 @@ app.get('/api/v1/playlists/:playlist_id/songs', (request, response) => {
   let playlistId = request.params.playlist_id
   let playlists = []
   let songs = []
-  database('playlists').select(['playlists.id', 'playlists.name'])
-  .where('playlists.id', playlistId)
+
+  Playlist.find(playlistId)
   .then((a) => {
     playlists = a
   })
 
-  database("songs")
-  .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
-  .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+  Song.withPlaylistId()
   .then((a) => { songs = a })
   .then(() => {
     for(let playlist of playlists) {
