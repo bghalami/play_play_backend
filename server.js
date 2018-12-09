@@ -1,6 +1,6 @@
 pry = require('pryjs')
 
-
+const Song       = require('./lib/models/song');
 const express    = require('express');
 const app        = express();
 const bodyParser = require('body-parser');
@@ -19,7 +19,7 @@ app.get("/", (request, response) => {
 });
 
 app.get('/api/v1/favorites', (request, response) => {
-  database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
+  Song.all()
     .then((songs) => {
       response.status(200).json(songs);
     })
