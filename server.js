@@ -1,5 +1,6 @@
 pry = require('pryjs')
 
+const SongsController = require('./controllers/api/v1/songs_controller')
 const Song       = require('./lib/models/song');
 const Playlist   = require('./lib/models/playlist');
 const express    = require('express');
@@ -19,7 +20,7 @@ app.get("/", (request, response) => {
   response.send("yo")
 });
 
-app.get('/api/v1/favorites', Song.all);
+app.get('/api/v1/favorites', SongsController.index);
 
 app.get('/api/v1/songs/:id', Song.find);
 
@@ -36,23 +37,28 @@ app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 
   let songName     = ""
   let playlistName = ""
-  database('songs').select('name')
-    .where('id', song)
-    .then(song => {
-      songName = song[0].name
-    })
-  database('playlists').select('name')
-    .where('id', playlist)
-    .then(playlist => {
-      playlistName = playlist[0].name
-    })
-  database('playlist_songs').insert(playlistSong, ['song_id', 'playlist_id'])
-    .then(() => {
-      response.status(201).json({"message": `Successfully added ${songName} to ${playlistName}`});
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
+  database('songs')
+  .select('name')
+  .where('id', song)
+  .then(song => {
+    songName = song[0].name
+  })
+
+  database('playlists')
+  .select('name')
+  .where('id', playlist)
+  .then(playlist => {
+    playlistName = playlist[0].name
+  })
+
+  database('playlist_songs')
+  .insert(playlistSong, ['song_id', 'playlist_id'])
+  .then(() => {
+    response.status(201).json({"message": `Successfully added ${songName} to ${playlistName}`});
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
 });
 
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
