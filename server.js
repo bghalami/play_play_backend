@@ -24,7 +24,7 @@ app.get('/api/v1/favorites', SongsController.index);
 
 app.get('/api/v1/songs/:id', SongsController.show);
 
-app.post('/api/v1/songs', Song.create);
+app.post('/api/v1/songs', SongsController.create);
 
 app.patch('/api/v1/songs/:id', Song.update);
 
