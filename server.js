@@ -27,25 +27,7 @@ app.post('/api/v1/songs', Song.create);
 
 app.patch('/api/v1/songs/:id', Song.update);
 
-app.delete('/api/v1/songs/:id', function (request, response) {
-  const songId = request.params.id;
-
-  database('playlist_songs')
-  .where("song_id", songId)
-  .del()
-  .catch((error) => {
-    response.status(404).json({ error });
-  })
-
-  Song.find(songId)
-  .del()
-  .then((deletedSong) => {
-    response.status(204).json({ "message": "Success" });
-  })
-  .catch((error) => {
-    response.status(404).json({ error });
-  })
-});
+app.delete('/api/v1/songs/:id', Song.delete);
 
 app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
   const playlist      = request.params.playlist_id
