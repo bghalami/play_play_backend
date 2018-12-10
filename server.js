@@ -22,7 +22,7 @@ app.get("/", (request, response) => {
 
 app.get('/api/v1/favorites', SongsController.index);
 
-app.get('/api/v1/songs/:id', Song.find);
+app.get('/api/v1/songs/:id', SongsController.show);
 
 app.post('/api/v1/songs', Song.create);
 
