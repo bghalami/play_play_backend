@@ -1,7 +1,7 @@
 pry = require('pryjs')
 
 const Song       = require('./lib/models/song');
-const Playlist       = require('./lib/models/playlist');
+const Playlist   = require('./lib/models/playlist');
 const express    = require('express');
 const app        = express();
 const bodyParser = require('body-parser');
@@ -19,25 +19,9 @@ app.get("/", (request, response) => {
   response.send("yo")
 });
 
-app.get('/api/v1/favorites', (request, response) => {
-  Song.all()
-    .then((songs) => {
-      response.status(200).json(songs);
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
-});
+app.get('/api/v1/favorites', Song.all);
 
-app.get('/api/v1/songs/:id', (request, response) => {
-  Song.find(request.params.id)
-    .then((songs) => {
-      response.status(200).json(songs);
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
-});
+app.get('/api/v1/songs/:id', Song.find);
 
 app.post('/api/v1/songs', (request, response) => {
   const song = request.body
@@ -184,6 +168,22 @@ app.get('/api/v1/playlists/:playlist_id/songs', (request, response) => {
   let playlistId = request.params.playlist_id
   let playlists = []
   let songs = []
+  // refactoring db calls 
+  /*
+  let playlistSongs = []
+
+  Playlist.songs()
+  .then((a) => { playlistSongs = a })
+  .then((playlistSongs) => {
+    let playlists = []
+    playlistSongs.filter(playlistSong => )
+    for (let playlistSong of playlistSongs) {
+      let playlist = {}
+      playlist.id = 
+      playlist.songs = songs.filter(song => (song.playlist_id == playlist.id))
+      playlist.songs.forEach(song => delete song.playlist_id)
+    }
+  */
 
   Playlist.find(playlistId)
   .then((a) => {
