@@ -25,21 +25,7 @@ app.get('/api/v1/songs/:id', Song.find);
 
 app.post('/api/v1/songs', Song.create);
 
-app.patch('/api/v1/songs/:id', function (request, response) {
-  const song   = request.body;
-  const songId = request.params.id;
-
-  Song.update(song, songId)
-    .then(() => {
-      Song.find(songId)
-      .then((updatedSong) => {
-      response.status(200).json({ songs: updatedSong[0] });
-    })
-  })
-  .catch((error) => {
-    response.status(500).json({ error });
-  });
-});
+app.patch('/api/v1/songs/:id', Song.update);
 
 app.delete('/api/v1/songs/:id', function (request, response) {
   const songId = request.params.id;
