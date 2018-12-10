@@ -47,3 +47,20 @@ exports.create = function(request, response) {
     response.status(500).json({ error });
   });
 }
+
+exports.update = function(request, response) {
+  const song = request.body;
+  const songId = request.params.id;
+
+  Song.update(request, response)
+  .then(() => {
+    Song.find(request, response)
+    .then((song) => {
+      response.status(200).json({ songs: song[0] });
+    })
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+
+}
