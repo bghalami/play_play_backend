@@ -1,14 +1,14 @@
 pry = require('pryjs')
 
-const SongsController    = require('./controllers/api/v1/songs_controller')
-const PlaylistController = require('./controllers/api/v1/playlists_controller')
-const SearchController = require('./controllers/api/v1/search_controller')
-const LandingController = require('./controllers/api/v1/landing_controller')
-const ArtistController = require('./controllers/api/v1/artist_controller')
-const TracksController = require('./controllers/api/v1/artist/tracks_controller')
+const SongsController    = require('./controllers/api/v1/songs_controller');
+const PlaylistController = require('./controllers/api/v1/playlists_controller');
+const SearchController   = require('./controllers/api/v1/search_controller');
+const LandingController  = require('./controllers/api/v1/landing_controller');
+const ArtistController   = require('./controllers/api/v1/artist_controller');
+const TracksController   = require('./controllers/api/v1/artist/tracks_controller');
 const express    = require('express');
 const app        = express();
-var cors = require('cors');
+const cors       = require('cors');
 const bodyParser = require('body-parser');
 
 app.use(cors());
