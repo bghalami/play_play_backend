@@ -28,7 +28,7 @@ app.post('/api/v1/songs', SongsController.create);
 
 app.patch('/api/v1/songs/:id', SongsController.update);
 
-app.delete('/api/v1/songs/:id', Song.delete);
+app.delete('/api/v1/songs/:id', SongsController.delete);
 
 app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
   const playlist      = request.params.playlist_id

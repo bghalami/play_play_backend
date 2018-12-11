@@ -62,5 +62,22 @@ exports.update = function(request, response) {
   .catch((error) => {
     response.status(500).json({ error });
   });
+}
 
+exports.delete = function(request, response) {
+  Promise.all([
+    Song.getPlaylists(request, response)
+    .del()
+    .catch((error) => {
+      response.status(404).json({ error });
+    }),
+    Song.find(request, response)
+    .del()
+    .then(() => {
+      response.status(204).json({ "message": "Success" });
+    })
+    .catch((error) => {
+      response.status(404).json({ error });
+    })
+  ])
 }
