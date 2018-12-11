@@ -2,6 +2,7 @@ pry = require('pryjs')
 
 const SongsController    = require('./controllers/api/v1/songs_controller')
 const PlaylistController = require('./controllers/api/v1/playlists_controller')
+const SearchController = require('./controllers/api/v1/search_controller')
 const Song       = require('./lib/models/song');
 const Playlist   = require('./lib/models/playlist');
 const express    = require('express');
@@ -38,6 +39,10 @@ app.get('/api/v1/playlists/:playlist_id/songs', PlaylistController.show);
 app.post('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.addSong);
 
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.deleteSong);
+
+app.get('/api/v1/search', SearchController.search);
+
+
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
