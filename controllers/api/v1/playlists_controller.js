@@ -52,3 +52,54 @@ exports.show = function(request, response) {
     })
   ])
 }
+
+exports.deleteSong = function(request, response) {
+  const playlist = request.params.playlist_id
+  const song = request.params.id
+
+  let songName = ""
+  let playlistName = ""
+  Promise.all([
+    Song.find(request, response)
+    .then(song => {
+      songName = song[0].name
+    }),
+    
+    Playlist.find(request, response)
+    .then(playlist => {
+      playlistName = playlist[0].name
+    }),
+    
+    Playlist.playlistSongs(request, response)
+    .del()
+    .then(() => {
+      response.status(201).json({ "message": `Successfully removed ${songName} from ${playlistName}` });
+    })
+    .catch((error) => {
+      response.status(404).json({ error });
+    })
+  ])
+}
+
+exports.addSong = function(request, response) {
+  let songName = ""
+  let playlistName = ""
+  
+  Song.find(request, response)
+  .then(song => {
+    songName = song[0].name
+  })
+
+  Playlist.find(request, response)
+  .then(playlist => {
+    playlistName = playlist[0].name
+  })
+
+  Playlist.addSong(request, response)
+  .then(() => {
+    response.status(201).json({ "message": `Successfully added ${songName} to ${playlistName}` });
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+}
