@@ -3,6 +3,7 @@ pry = require('pryjs')
 const SongsController    = require('./controllers/api/v1/songs_controller')
 const PlaylistController = require('./controllers/api/v1/playlists_controller')
 const SearchController = require('./controllers/api/v1/search_controller')
+const LandingController = require('./controllers/api/v1/landing_controller')
 const Song       = require('./lib/models/song');
 const Playlist   = require('./lib/models/playlist');
 const express    = require('express');
@@ -42,6 +43,7 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.delete
 
 app.get('/api/v1/search', SearchController.search);
 
+app.get('/api/v1/landing',LandingController.index);
 
 
 app.listen(app.get('port'), () => {
