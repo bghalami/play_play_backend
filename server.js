@@ -43,7 +43,7 @@ app.post('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.addSong)
 
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.deleteSong);
 
-app.get('/api/v1/search', SearchController.search);
+app.get('/api/v1/search/:artist_name', SearchController.search);
 app.get('/api/v1/landing',LandingController.index);
 app.get('/api/v1/artists/:artist_name',ArtistController.show);
 
