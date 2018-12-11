@@ -5,7 +5,8 @@ if (process.env.NODE_ENV !== 'production') {
 require("isomorphic-fetch")
 
 exports.search = function(request, response) {
-  const search = request.body.name
+  let search = request.body.name;
+  search = encodeURIComponent(search.trim());
 
   fetch(`http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=${search}&api_key=${process.env.LAST_FM_API_KEY}&format=json&limit=10`)
     .then(response => response.json())

@@ -5,6 +5,7 @@ const PlaylistController = require('./controllers/api/v1/playlists_controller')
 const SearchController = require('./controllers/api/v1/search_controller')
 const LandingController = require('./controllers/api/v1/landing_controller')
 const ArtistController = require('./controllers/api/v1/artist_controller')
+const TracksController = require('./controllers/api/v1/artist/tracks_controller')
 const Song       = require('./lib/models/song');
 const Playlist   = require('./lib/models/playlist');
 const express    = require('express');
@@ -46,7 +47,7 @@ app.get('/api/v1/search', SearchController.search);
 app.get('/api/v1/landing',LandingController.index);
 app.get('/api/v1/artist',ArtistController.show);
 
-app.get('/api/v1/artist/tracks',TracksController.index);
+app.get('/api/v1/artist/tracks',TracksController.show);
 
 
 app.listen(app.get('port'), () => {
