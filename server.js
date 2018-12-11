@@ -94,45 +94,7 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 
 app.get('/api/v1/playlists', PlaylistController.index);
 
-app.get('/api/v1/playlists/:playlist_id/songs', (request, response) => {
-  let playlistId = request.params.playlist_id
-  let playlists = []
-  let songs = []
-  // refactoring db calls 
-  /*
-  let playlistSongs = []
-
-  Playlist.songs()
-  .then((a) => { playlistSongs = a })
-  .then((playlistSongs) => {
-    let playlists = []
-    playlistSongs.filter(playlistSong => )
-    for (let playlistSong of playlistSongs) {
-      let playlist = {}
-      playlist.id = 
-      playlist.songs = songs.filter(song => (song.playlist_id == playlist.id))
-      playlist.songs.forEach(song => delete song.playlist_id)
-    }
-  */
-
-  Playlist.find(playlistId)
-  .then((a) => {
-    playlists = a
-  })
-
-  Song.withPlaylistId()
-  .then((a) => { songs = a })
-  .then(() => {
-    for(let playlist of playlists) {
-      playlist.songs = songs.filter(song => (song.playlist_id == playlist.id))
-      playlist.songs.forEach(song => delete song.playlist_id)
-    }
-  })
-  .then(() => {response.status(200).json(playlists)})
-  .catch((error) => {
-    response.status(500).json({ error });
-  });
-});
+app.get('/api/v1/playlists/:playlist_id/songs', PlaylistController.show);
 
 
 
