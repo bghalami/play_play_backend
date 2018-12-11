@@ -5,8 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 require("isomorphic-fetch")
 
 exports.show = function(request, response) {
-  let search = request.body.name;
-  search = encodeURIComponent(search.trim());
+  let search = request.params.artist_name;
 
   let tracksJson = [];
   fetch(`http://api.musixmatch.com/ws/1.1/track.search?q_artist=${search}&page_size=100&page=1&s_track_rating=desc&apikey=${process.env.MUSIXMATCH_API_KEY}`)
@@ -23,7 +22,7 @@ exports.show = function(request, response) {
         let song_rating = track.track.track_rating;
         tracksJson.push({name: name, genre: genre, artist_name: artist_name, song_rating: song_rating})
       }
-      eval(pry.it)
+      response.status(200).json(tracksJson)
     })
     .catch((error) => console.error({ error }))
 }

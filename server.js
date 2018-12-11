@@ -45,9 +45,9 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.delete
 
 app.get('/api/v1/search', SearchController.search);
 app.get('/api/v1/landing',LandingController.index);
-app.get('/api/v1/artist',ArtistController.show);
+app.get('/api/v1/artists/:artist_name',ArtistController.show);
 
-app.get('/api/v1/artist/tracks',TracksController.show);
+app.get('/api/v1/artists/:artist_name/tracks',TracksController.show);
 
 
 app.listen(app.get('port'), () => {

@@ -14,7 +14,7 @@ exports.index = function(request, response) {
       for (let artist of artistArray) {
         landingArray.push({name: artist.name, image_url: artist.image[4]["#text"]})
       }
-      for (i = 0; i < 6; i++) {
+      for (i = 0; i < 5; i++) {
         let randomArtist = landingArray[Math.floor(Math.random()*landingArray.length)];
         landingJson.push(randomArtist);
         landingArray.splice(randomArtist, 1)
