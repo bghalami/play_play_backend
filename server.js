@@ -1,6 +1,8 @@
 pry = require('pryjs')
 
-
+const SongsController = require('./controllers/api/v1/songs_controller')
+const Song       = require('./lib/models/song');
+const Playlist   = require('./lib/models/playlist');
 const express    = require('express');
 const app        = express();
 const bodyParser = require('body-parser');
@@ -18,91 +20,15 @@ app.get("/", (request, response) => {
   response.send("yo")
 });
 
-app.get('/api/v1/favorites', (request, response) => {
-  database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
-    .then((songs) => {
-      response.status(200).json(songs);
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
-});
+app.get('/api/v1/favorites', SongsController.index);
 
-app.get('/api/v1/songs/:id', (request, response) => {
-  database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
-  .where("id", request.params.id)
-    .then((songs) => {
-      response.status(200).json(songs);
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
-});
+app.get('/api/v1/songs/:id', SongsController.show);
 
-app.post('/api/v1/songs', (request, response) => {
-  const song = request.body
+app.post('/api/v1/songs', SongsController.create);
 
-  const requiredParameters = ['name', 'artist_name', 'genre', 'song_rating']
-  for(let parameter of requiredParameters) {
-    if (!song[parameter]) {
-      return response
-        .status(400)
-        .send({error: `Missing "${parameter}"`})
-    } else if (song['song_rating'] > 100 || song['song_rating'] < 1) {
-      return response
-        .status(400)
-        .send({error: 'Song Rating must be between 1-100'})
-    }
-  }
+app.patch('/api/v1/songs/:id', SongsController.update);
 
-  database('songs').insert(song, ['id', 'name', 'artist_name', 'genre', 'song_rating'])
-    .then((song) => {
-      response.status(200).json({"songs": song[0]});
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
-});
-
-app.patch('/api/v1/songs/:id', function (request, response) {
-  const song   = request.body;
-  const songId = request.params.id;
-
-  database('songs').select('id')
-  .where("id", songId)
-  .update(song)
-  .then(() => {
-    database('songs').select(['id', 'name', 'artist_name', 'genre', 'song_rating'])
-    .where('id', songId)
-    .then((updatedSong) => {
-      response.status(200).json({ songs: updatedSong[0] });
-    })
-  })
-  .catch((error) => {
-    response.status(500).json({ error });
-  });
-});
-
-app.delete('/api/v1/songs/:id', function (request, response) {
-  const songId = request.params.id;
-
-  database('playlist_songs')
-  .where("song_id", songId)
-  .del()
-  .catch((error) => {
-    response.status(404).json({ error });
-  })
-
-  database('songs')
-  .where("id", songId)
-  .del()
-  .then(() => {
-    response.status(204);
-  })
-  .catch((error) => {
-    response.status(404).json({ error });
-  })
-});
+app.delete('/api/v1/songs/:id', SongsController.delete);
 
 app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
   const playlist      = request.params.playlist_id
@@ -111,23 +37,28 @@ app.post('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 
   let songName     = ""
   let playlistName = ""
-  database('songs').select('name')
-    .where('id', song)
-    .then(song => {
-      songName = song[0].name
-    })
-  database('playlists').select('name')
-    .where('id', playlist)
-    .then(playlist => {
-      playlistName = playlist[0].name
-    })
-  database('playlist_songs').insert(playlistSong, ['song_id', 'playlist_id'])
-    .then(() => {
-      response.status(201).json({"message": `Successfully added ${songName} to ${playlistName}`});
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
+  database('songs')
+  .select('name')
+  .where('id', song)
+  .then(song => {
+    songName = song[0].name
+  })
+
+  database('playlists')
+  .select('name')
+  .where('id', playlist)
+  .then(playlist => {
+    playlistName = playlist[0].name
+  })
+
+  database('playlist_songs')
+  .insert(playlistSong, ['song_id', 'playlist_id'])
+  .then(() => {
+    response.status(201).json({"message": `Successfully added ${songName} to ${playlistName}`});
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
 });
 
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
@@ -164,14 +95,13 @@ app.delete('/api/v1/playlists/:playlist_id/songs/:id', (request, response) => {
 app.get('/api/v1/playlists', (request, response) => {
   let playlists = []
   let songs = []
-  database('playlists').select(['playlists.id', 'playlists.name'])
+
+  Playlist.all()
   .then((a) => {
     playlists = a
   })
 
-  database("songs")
-  .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
-  .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+  Song.withPlaylistId()
   .then((a) => { songs = a })
   .then(() => {
     for(let playlist of playlists) {
@@ -189,15 +119,29 @@ app.get('/api/v1/playlists/:playlist_id/songs', (request, response) => {
   let playlistId = request.params.playlist_id
   let playlists = []
   let songs = []
-  database('playlists').select(['playlists.id', 'playlists.name'])
-  .where('playlists.id', playlistId)
+  // refactoring db calls 
+  /*
+  let playlistSongs = []
+
+  Playlist.songs()
+  .then((a) => { playlistSongs = a })
+  .then((playlistSongs) => {
+    let playlists = []
+    playlistSongs.filter(playlistSong => )
+    for (let playlistSong of playlistSongs) {
+      let playlist = {}
+      playlist.id = 
+      playlist.songs = songs.filter(song => (song.playlist_id == playlist.id))
+      playlist.songs.forEach(song => delete song.playlist_id)
+    }
+  */
+
+  Playlist.find(playlistId)
   .then((a) => {
     playlists = a
   })
 
-  database("songs")
-  .select(['songs.id', 'name', 'artist_name', 'genre', 'song_rating', 'playlist_songs.playlist_id'])
-  .join("playlist_songs", 'songs.id', '=', 'playlist_songs.song_id')
+  Song.withPlaylistId()
   .then((a) => { songs = a })
   .then(() => {
     for(let playlist of playlists) {
