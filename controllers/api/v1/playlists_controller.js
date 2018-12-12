@@ -37,7 +37,7 @@ exports.show = function(request, response) {
     .then((a) => {
       playlists = a
     }),
-    
+
     Song.withPlaylistId()
     .then((a) => { songs = a })
     .then(() => {
@@ -64,12 +64,12 @@ exports.deleteSong = function(request, response) {
     .then(song => {
       songName = song[0].name
     }),
-    
+
     Playlist.find(request, response)
     .then(playlist => {
       playlistName = playlist[0].name
     }),
-    
+
     Playlist.playlistSongs(request, response)
     .del()
     .then(() => {
@@ -84,7 +84,7 @@ exports.deleteSong = function(request, response) {
 exports.addSong = function(request, response) {
   let songName = ""
   let playlistName = ""
-  
+
   Song.find(request, response)
   .then(song => {
     songName = song[0].name
@@ -101,5 +101,21 @@ exports.addSong = function(request, response) {
   })
   .catch((error) => {
     response.status(500).json({ error });
+  });
+}
+
+exports.create = function(request, response) {
+  const playlist = request.body
+  if (!playlist.name) {
+    return response
+      .status(400)
+      .send({ error: `Missing "${parameter}"` })
+  }
+  Playlist.create(request, response)
+  .then((playlist) => {
+    response.status(200).json({ "playlists": playlist[0] }) ;
+  })
+  .catch((error) => {
+    response.status(500).json({ error})
   });
 }

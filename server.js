@@ -33,6 +33,8 @@ app.delete('/api/v1/songs/:id', SongsController.delete);
 
 app.get('/api/v1/playlists', PlaylistController.index);
 
+app.post('/api/v1/playlists', PlaylistController.create);
+
 app.get('/api/v1/playlists/:playlist_id/songs', PlaylistController.show);
 
 app.post('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.addSong);
