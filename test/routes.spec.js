@@ -128,7 +128,7 @@ describe('Songs API', () => {
       });
   });
 
-  it("can create a song", done => {
+  it("can update a song", done => {
     
     chai.request(server)
       .patch(`/api/v1/songs/1`)
@@ -147,6 +147,16 @@ describe('Songs API', () => {
         response.body.songs.genre.should.equal('Rock');
         response.body.songs.should.have.property('song_rating');
         response.body.songs.song_rating.should.equal(85);
+        done();
+      });
+  });
+  
+  it("can delete a song", done => {
+    
+    chai.request(server)
+      .delete(`/api/v1/songs/1`)
+      .end((err, response) => {
+        response.should.have.status(204);
         done();
       });
   });
