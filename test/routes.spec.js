@@ -238,5 +238,15 @@ describe('Playlists API', () => {
         done();
       });
   });
+
+  it("deletes a song from a playlist", done => {
+    chai.request(server)
+      .delete("/api/v1/playlists/1/songs/1")
+      .end((err, response) => {
+        response.should.have.status(201);
+        response.body.should.have.property('message');
+        done();
+      });
+  });
 });
 
