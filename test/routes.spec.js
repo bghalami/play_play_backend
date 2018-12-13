@@ -162,5 +162,54 @@ describe('Songs API', () => {
   });
 });
 
+describe('Playlists API', () => {
+  before((done) => {
+    database.migrate.latest()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      })
+  });
 
+  beforeEach((done) => {
+    database.seed.run()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+  });
+
+  it("returns playlists", done => {
+    chai.request(server)
+      .get("/api/v1/playlists")
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.be.a('array');
+        response.body.length.should.equal(2);
+        response.body[0].should.have.property('id');
+        response.body[0].should.have.property('name');
+        response.body[0].name.should.equal('Rock Songs');
+        response.body[0].should.have.property('songs');
+        response.body[0].songs.should.be.a('array');
+        response.body[0].songs[0].should.have.property('artist_name');
+        response.body[0].songs[0].should.have.equal('Queen');
+        done();
+      });
+  });
+
+  it("creates a playlist", done => {
+    chai.request(server)
+      .post("/api/v1/playlists")
+      .send({ id: 3, name: 'old Songs' })
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.be.a('object');
+        response.body.should.have.property('playlists');
+        response.body.playlists.should.equal('old Songs');
+        done();
+      });
+  });
+});
 
