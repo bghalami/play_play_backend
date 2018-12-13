@@ -97,7 +97,7 @@ exports.addSong = function(request, response) {
 
   Playlist.addSong(request, response)
   .then(() => {
-    response.status(201).json({ body: {"message": `Successfully added ${songName} to ${playlistName}`} });
+    response.status(201).json({ "message": `Successfully added ${songName} to ${playlistName}` });
   })
   .catch((error) => {
     response.status(500).json({ error });
