@@ -140,13 +140,13 @@ describe('Songs API', () => {
         response.body.should.have.property('songs');
         response.body.songs.should.be.an('object');
         response.body.songs.should.have.property('name');
-        response.body.songs.name.should.equal('new song');
+        response.body.songs.name.should.equal('new name');
         response.body.songs.should.have.property('artist_name');
-        response.body.songs.artist_name.should.equal('old dogs');
+        response.body.songs.artist_name.should.equal('Queen');
         response.body.songs.should.have.property('genre');
         response.body.songs.genre.should.equal('Rock');
         response.body.songs.should.have.property('song_rating');
-        response.body.songs.song_rating.should.equal(44);
+        response.body.songs.song_rating.should.equal(85);
         done();
       });
   });
