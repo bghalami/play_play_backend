@@ -127,6 +127,29 @@ describe('Songs API', () => {
         done();
       });
   });
+
+  it("can create a song", done => {
+    
+    chai.request(server)
+      .patch(`/api/v1/songs/1`)
+      .send( { name: 'new name' }
+      )
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.have.property('songs');
+        response.body.songs.should.be.an('object');
+        response.body.songs.should.have.property('name');
+        response.body.songs.name.should.equal('new song');
+        response.body.songs.should.have.property('artist_name');
+        response.body.songs.artist_name.should.equal('old dogs');
+        response.body.songs.should.have.property('genre');
+        response.body.songs.genre.should.equal('Rock');
+        response.body.songs.should.have.property('song_rating');
+        response.body.songs.song_rating.should.equal(44);
+        done();
+      });
+  });
 });
 
 
