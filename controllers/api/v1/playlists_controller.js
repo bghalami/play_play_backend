@@ -1,3 +1,4 @@
+var pry = require('pryjs')
 const Playlist = require('../../../lib/models/playlist');
 const Song = require('../../../lib/models/song');
 
@@ -27,13 +28,12 @@ exports.index = function(request, response) {
 }
 
 exports.show = function(request, response) {
-  let playlistId = request.params.playlist_id
   let playlists = []
   let songs = []
 
   Promise.all([
 
-    Playlist.find(playlistId)
+    Playlist.find(request, response)
     .then((a) => {
       playlists = a
     }),
@@ -54,9 +54,6 @@ exports.show = function(request, response) {
 }
 
 exports.deleteSong = function(request, response) {
-  const playlist = request.params.playlist_id
-  const song = request.params.id
-
   let songName = ""
   let playlistName = ""
   Promise.all([

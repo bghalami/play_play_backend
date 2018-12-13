@@ -18,27 +18,29 @@ app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Play-play';
 
 app.get("/", (request, response) => {
-  response.send("yo")
+  response.send({
+    "GET songs": '/api/v1/favorites',
+    "GET song": '/api/v1/songs/:id',
+    "POST song": '/api/v1/songs',
+    "PATCH song": '/api/v1/songs/:id',
+    "DELETE song": '/api/v1/songs/:id',
+    "GET playlists": '/api/v1/playlists',
+    "POST playlist": '/api/v1/playlists',
+    "GET playlist songs": '/api/v1/playlists/:playlist_id/songs',
+    "POST playlist song": '/api/v1/playlists/:playlist_id/songs/:id',
+    "DELETE playlist song": '/api/v1/playlists/:playlist_id/songs/:id'    
+  })
 });
 
 app.get('/api/v1/favorites', SongsController.index);
-
 app.get('/api/v1/songs/:id', SongsController.show);
-
 app.post('/api/v1/songs', SongsController.create);
-
 app.patch('/api/v1/songs/:id', SongsController.update);
-
 app.delete('/api/v1/songs/:id', SongsController.delete);
-
 app.get('/api/v1/playlists', PlaylistController.index);
-
 app.post('/api/v1/playlists', PlaylistController.create);
-
 app.get('/api/v1/playlists/:playlist_id/songs', PlaylistController.show);
-
 app.post('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.addSong);
-
 app.delete('/api/v1/playlists/:playlist_id/songs/:id', PlaylistController.deleteSong);
 
 app.get('/api/v1/search/:artist_name', SearchController.search);
