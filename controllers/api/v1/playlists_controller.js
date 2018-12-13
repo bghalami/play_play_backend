@@ -73,7 +73,7 @@ exports.deleteSong = function(request, response) {
     Playlist.playlistSongs(request, response)
     .del()
     .then(() => {
-      response.status(201).json({ message: `Successfully removed ${songName} from ${playlistName}` });
+      response.status(201).json({ "message": `Successfully removed ${songName} from ${playlistName}` });
     })
     .catch((error) => {
       response.status(404).json({ error });
@@ -97,7 +97,6 @@ exports.addSong = function(request, response) {
 
   Playlist.addSong(request, response)
   .then(() => {
-    response.append(body, "")
     response.status(201).json({ "message": `Successfully added ${songName} to ${playlistName}` });
   })
   .catch((error) => {
