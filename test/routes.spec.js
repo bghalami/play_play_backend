@@ -228,5 +228,15 @@ describe('Playlists API', () => {
         done();
       });
   });
+
+  it("adds a song to a playlist", done => {
+    chai.request(server)
+      .post("/api/v1/playlists/1/songs/2")
+      .end((err, response) => {
+        response.should.have.status(201);
+        response.body.should.have.property('message');
+        done();
+      });
+  });
 });
 

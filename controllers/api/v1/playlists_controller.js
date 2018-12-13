@@ -54,9 +54,6 @@ exports.show = function(request, response) {
 }
 
 exports.deleteSong = function(request, response) {
-  const playlist = request.params.playlist_id
-  const song = request.params.id
-
   let songName = ""
   let playlistName = ""
   Promise.all([
