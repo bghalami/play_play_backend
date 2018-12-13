@@ -211,5 +211,22 @@ describe('Playlists API', () => {
         done();
       });
   });
+
+  it("returns songs from a playlist", done => {
+    chai.request(server)
+      .get("/api/v1/playlists/1/songs")
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.be.a('array');
+        response.body[0].should.have.property('id');
+        response.body[0].should.have.property('name');
+        response.body[0].should.have.property('songs');
+        response.body[0].songs.should.be.an('array');
+        response.body[0].songs[0].should.be.an('object');
+        response.body[0].songs[0].have.property('name');
+        done();
+      });
+  });
 });
 
