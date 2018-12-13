@@ -1,5 +1,4 @@
 var pry = require('pryjs')
-// eval(pry.it)
 
 const chai     = require('chai');
 const should   = chai.should();
@@ -18,6 +17,7 @@ describe('Landing Page', () => {
       .get("/")
       .end((err, response) => {
         response.should.have.status(200);
+        response.should.be.html;
         done();
     });
   });
@@ -61,11 +61,73 @@ describe('Favorites API', () => {
   });
 });
 
+describe('Songs API', () => {
+  before((done) => {
+    database.migrate.latest()
+      .then( () => done() )
+      .catch(error => {
+        throw error;
+      })
+  });
 
-describe("My API routes", () => {
+  beforeEach((done) => {
+    database.seed.run()
+      .then( (a) => done() )
+      .catch(error => {
+        throw error;
+      });
+  });
 
 
-  after((done) => {
+  it("song show route returns a song by id", done => {
+    
+    chai.request(server)
+      .get(`/api/v1/songs/1`)
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body[0].should.have.property('id');
+        response.body[0].should.be.an('object');
+        response.body[0].should.have.property('name');
+        response.body[0].name.should.equal('Bicycle');
+        response.body[0].should.have.property('artist_name');
+        response.body[0].artist_name.should.equal('Queen');
+        response.body[0].should.have.property('genre');
+        response.body[0].genre.should.equal('Rock');
+        response.body[0].should.have.property('song_rating');
+        done();
+      });
+  });
 
+  it("can create a song", done => {
+    
+    chai.request(server)
+      .post(`/api/v1/songs`)
+      .send( { 
+        id: 3, 
+        name: 'new song', 
+        artist_name: 'old dogs', 
+        genre: 'Rock', 
+        song_rating: 44, 
+        favorite: false }
+      )
+      .end((err, response) => {
+        response.should.have.status(200);
+        response.should.be.json;
+        response.body.should.have.property('songs');
+        response.body.songs.should.be.an('object');
+        response.body.songs.should.have.property('name');
+        response.body.songs.name.should.equal('new song');
+        response.body.songs.should.have.property('artist_name');
+        response.body.songs.artist_name.should.equal('old dogs');
+        response.body.songs.should.have.property('genre');
+        response.body.songs.genre.should.equal('Rock');
+        response.body.songs.should.have.property('song_rating');
+        response.body.songs.song_rating.should.equal(44);
+        done();
+      });
   });
 });
+
+
+
